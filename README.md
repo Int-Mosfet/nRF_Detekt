@@ -1,6 +1,8 @@
 # nRF_Detekt
 Using nRF24L01+ radio modules to send remote logs of activating a sensor
 
+Add in these libraries to the Arduino IDE to build: 
+
 Uses RF24: https://github.com/tmrh20/RF24/
 
 Uses Entropy: https://sites.google.com/site/astudyofentropy/project-definition/timer-jitter-entropy-sources/entropy-library
