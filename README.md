@@ -1,5 +1,7 @@
 # nRF_Detekt
-Using nRF24L01+ radio modules to send remote logs of activating a sensor
+Using nRF24L01+ radio modules to send remote logs of activating a sensor from transmitter connected to sensor to an ideally hidden receiver.
+
+I will likely soon move development to Atmel Studio 7, but...
 
 Add in these libraries to the Arduino IDE to build: 
 
