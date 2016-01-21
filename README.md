@@ -19,3 +19,5 @@ Want to make a "shield" for holding the nRF24 module and a separate power supply
 
 Want some kind of "spread spectrum" implementation integrated in, to change channels on every send.
 
+Want a chat-based program, that works out the box.
+
