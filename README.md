@@ -28,4 +28,6 @@ Want a chat-based program, that works out the box.
 
 
 ![nrfd_p1](http://1.bp.blogspot.com/-XRwyKl3rFLQ/VrG48nReEUI/AAAAAAAAANI/AyTfjKfyB_s/s320/0101161626.jpg)
+:height: 500px
+:width: 400px
 
