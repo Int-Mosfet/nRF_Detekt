@@ -37,3 +37,6 @@ My WishList is the following:
 
 ![nrfd_p3](http://1.bp.blogspot.com/-APzVJiaRSlg/VrG5CoMjAJI/AAAAAAAAANQ/rdJeIdwVzW8/s1600/0119160345.jpg)
 
+![nrfd_p4](https://1.bp.blogspot.com/-V6RRoeGqZPg/V2uCpYnySYI/AAAAAAAAAN8/IaAWHKK6qqYHWNv0ph-Pu7p8cYir21IUQCLcB/s1600/nrf_detekt_pinout_recv.png)
+
+![nrfd_p5](https://3.bp.blogspot.com/-Q-tvfZppnik/V2uCptDcHRI/AAAAAAAAAOE/gbL02jddSIcf1gVidwmsiHgbPR11BbApwCLcB/s1600/nrf_detekt_pinout_trans.png)
