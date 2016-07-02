@@ -22,12 +22,12 @@
 #include <EEPROM.h>             //for storing channels, activations, other variables
 #include <Entropy.h>            //for generating entropy
 #include <AESLib.h>             //for AES encryption
-#include <Xtea.h> 				      //for XTEA encryption
-								                //Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
+#include <Xtea.h> 		//for XTEA encryption
+				//Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
 #include <Keeloq.h>             //for Keeloq encryption
                                 //Make sure to change WProgram.h to Arduino.h in Keeloq.cpp and Keeloq.h !!!!
-#include "RF24.h"				        //for nRF24 radio
-#include "nRF24L01.h"			      //for nRF24 radio
+#include "RF24.h"		//for nRF24 radio
+#include "nRF24L01.h"		//for nRF24 radio
 //#include "printf.h"
 
 /**************
@@ -94,15 +94,15 @@ LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 /**************
 * GLOBAL VARIABLES
 **************/
-uint32_t act_count;					      //activation count
+uint32_t act_count;			//activation count
 uint16_t act_count_addr = 128;		//act count eeprom address
-uint8_t ch_index;					        //channel index
-uint16_t ch_index_addr = 64;		  //channel index eeprom address
-uint8_t auth_fail_flag;				    //if authentication fails, set this flag
+uint8_t ch_index;			//channel index
+uint16_t ch_index_addr = 64;		//channel index eeprom address
+uint8_t auth_fail_flag;			//if authentication fails, set this flag
 uint16_t auth_fail_flag_addr = 256;	//auth fail flag eeprom address
 
-uint16_t addr = 0;					      //EEPROM address
-uint8_t val = 0xC1;					      //variable signifying activation in EEPROM
+uint16_t addr = 0;			//EEPROM address
+uint8_t val = 0xC1;			//variable signifying activation in EEPROM
 const uint8_t eeprom_state = 0;		//whether or not to write to eeprom on activations (0 -> off, 1 -> on)
 
 /**************
@@ -185,7 +185,7 @@ void setup() {
   lcd.setCursor(0,1);				//setting to char 0, line 1
   lcd.print("Ch:");
   lcd.setCursor(3,1);
-  lcd.print(ch_index);					//printing channel number
+  lcd.print(ch_index);				//printing channel number
   lcd.setCursor(7,1);
   lcd.print("AN:");
   lcd.setCursor(10,1);
@@ -193,16 +193,16 @@ void setup() {
   
   Serial.begin(115200);				//for the serial monitor
   
-  radio.begin();					          //turn on radio
-  //radio.setChannel(ch_index);		  //uncomment if you want channel changing feature
-  radio.setChannel(0);				      //otherwise statically set channel, I recommend using one from my list if in US
-  radio.setAutoAck(1);				      //This makes your life easier, but can potentially open up some attacks
-  radio.setRetries(15, 15);			    //largest retries possible, 15 (delay of 4000uS) and 15 (number of retries if error encountered)
-  radio.setPayloadSize(32);			    //we want to use all 32 bytes of payload
-  radio.setAddressWidth(5);			    //max length for max authentication
+  radio.begin();			//turn on radio
+  //radio.setChannel(ch_index);		//uncomment if you want channel changing feature
+  radio.setChannel(0);			//otherwise statically set channel, I recommend using one from my list if in US
+  radio.setAutoAck(1);			//This makes your life easier, but can potentially open up some attacks
+  radio.setRetries(15, 15);		//largest retries possible, 15 (delay of 4000uS) and 15 (number of retries if error encountered)
+  radio.setPayloadSize(32);		//we want to use all 32 bytes of payload
+  radio.setAddressWidth(5);		//max length for max authentication
   radio.setDataRate(RF24_250KBPS);	//slowest speed for max reliability
   radio.setCRCLength(RF24_CRC_16);	//highest CRC for max reliability
-  radio.setPALevel(RF24_PA_MAX);	  //(Levels go from 0 - 3, 3 is MAX)
+  radio.setPALevel(RF24_PA_MAX);	//(Levels go from 0 - 3, 3 is MAX)
   
   // Open a writing and reading pipe on each radio, with opposite addresses
   // You can have a "multiceiver" where 1 receiver can be paired with up to
@@ -355,26 +355,26 @@ void loop() {
         //authentication check
         if ( (dataPacket.d != 0xDEADBEEF) || (dataPacket.e != 0xBEEFDEAD) )
            {
-              //if you enter here it's bad news...
-			        //there may have been an attack, more likely
-			        //it's just a failure of the RF comms...
-			        //if there was an attack, it failed b/c of
-			        //the authentication check, now we can log this
-			        //potential attack.
+              	//if you enter here it's bad news...
+		//there may have been an attack, more likely
+		//it's just a failure of the RF comms...
+		//if there was an attack, it failed b/c of
+		//the authentication check, now we can log this
+		//potential attack.
 			  
-			        act_count--; //don't log false activations
+		act_count--; //don't log false activations
 			  
-              //putting latest act_count into eeprom
-              EEPROM.put(act_count_addr, act_count);
-              //act_count = EEPROM.read(act_count_addr);
+              	//putting latest act_count into eeprom
+              	EEPROM.put(act_count_addr, act_count);
+              	//act_count = EEPROM.read(act_count_addr);
 			  
-              //possibly have a separate variable to signify
-              //potential attacks in eeprom
-			        //for now let's just set another flag in eeprom
-			        //so that we have to reflash it to turn it off
+              	//possibly have a separate variable to signify
+              	//potential attacks in eeprom
+		//for now let's just set another flag in eeprom
+		//so that we have to reflash it to turn it off
 			  
-			        auth_fail_flag = 1;
-			        EEPROM.put(auth_fail_flag_addr, auth_fail_flag);
+		auth_fail_flag = 1;
+		EEPROM.put(auth_fail_flag_addr, auth_fail_flag);
            }
         
         
@@ -433,17 +433,17 @@ void loop() {
         //ch_index = EEPROM.read(ch_index_addr);
         //reset radio parameters
         //radio.setChannel(ch_index);			//uncomment if you want channel changing feature
-        act_count = EEPROM.read(act_count_addr);  //keeping track of act_count
-        radio.setChannel(0);				      //otherwise statically set channel
-        radio.setAutoAck(1);				      //This makes your life easier, but can potentially open up some attacks
-        radio.setRetries(15, 15);			    //largest retries possible, 15 (delay of 4000uS) and 15 (number of retries if error encountered)
-        radio.setPayloadSize(32);			    //we want to use all 32 bytes of payload
-        radio.setAddressWidth(5);			    //max length for max authentication
-        radio.setDataRate(RF24_250KBPS);	//slowest speed for max reliability
-        radio.setCRCLength(RF24_CRC_16);	//highest CRC for max reliability
-        radio.setPALevel(RF24_PA_MAX);		//(Levels go from 0 - 3, 3 is MAX)
+        act_count = EEPROM.read(act_count_addr);  	//keeping track of act_count
+        radio.setChannel(0);				//otherwise statically set channel
+        radio.setAutoAck(1);				//This makes your life easier, but can potentially open up some attacks
+        radio.setRetries(15, 15);			//largest retries possible, 15 (delay of 4000uS) and 15 (number of retries if error encountered)
+        radio.setPayloadSize(32);			//we want to use all 32 bytes of payload
+        radio.setAddressWidth(5);			//max length for max authentication
+        radio.setDataRate(RF24_250KBPS);		//slowest speed for max reliability
+        radio.setCRCLength(RF24_CRC_16);		//highest CRC for max reliability
+        radio.setPALevel(RF24_PA_MAX);			//(Levels go from 0 - 3, 3 is MAX)
         
-		    //uncomment if you want channel changing feature
+	//uncomment if you want channel changing feature
         //if( ch_index > 124 ) //have to make it 1 less than TX index check to stay synced
         //{
         //    ch_index = 0;
