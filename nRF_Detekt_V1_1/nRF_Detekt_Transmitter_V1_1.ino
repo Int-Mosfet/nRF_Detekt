@@ -19,16 +19,16 @@
 * nRF_Detekt (Transmitter), V1.1
 **************/
 
-#include <SPI.h>			    //for nRF module
-#include <Entropy.h>			//for generating entropy
-#include <EEPROM.h>			  //for storing channels, activations, other variables
-#include <AESLib.h>			  //for AES encryption
-#include <Xtea.h>			    //for XTEA encryption
-					                //Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
-#include <Keeloq.h>       //for Keeloq encryption
-                          //Make sure to change WProgram.h to Arduino.h in Keeloq.cpp and Keeloq.h !!!!
-#include "RF24.h"			    //for nRF24 radio (primary firmware in .cpp file)
-#include "nRF24L01.h"			//for nRF24 radio (definitions)
+#include <SPI.h>		//for nRF module
+#include <Entropy.h>		//for generating entropy
+#include <EEPROM.h>		//for storing channels, activations, other variables
+#include <AESLib.h>		//for AES encryption
+#include <Xtea.h>		//for XTEA encryption
+				//Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
+#include <Keeloq.h>       	//for Keeloq encryption
+                          	//Make sure to change WProgram.h to Arduino.h in Keeloq.cpp and Keeloq.h !!!!
+#include "RF24.h"		//for nRF24 radio (primary firmware in .cpp file)
+#include "nRF24L01.h"		//for nRF24 radio (definitions)
 
 /**************
 * CRYPTO VARIABLES
