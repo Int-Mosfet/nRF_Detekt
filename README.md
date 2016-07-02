@@ -39,9 +39,9 @@ My WishList is the following:
 /* Development will happen sporatically, but mostly thru the summer and winter break times.  I want to move to some other projects too.  But I will keep revisiting this project because I know it can eventually be really good. */
 
 
-![nrfd_p1](http://1.bp.blogspot.com/-XRwyKl3rFLQ/VrG48nReEUI/AAAAAAAAANI/AyTfjKfyB_s/s320/0101161626.jpg)
+![nrfd_p1](http://1.bp.blogspot.com/-XRwyKl3rFLQ/VrG48nReEUI/AAAAAAAAANI/AyTfjKfyB_s/s1600/0101161626.jpg)
 
-![nrfd_p2](http://4.bp.blogspot.com/-xkpkRvPDMsE/VrG4_sUPCWI/AAAAAAAAANM/GqbcLJq_DQE/s320/0101161633.jpg)
+![nrfd_p2](http://4.bp.blogspot.com/-xkpkRvPDMsE/VrG4_sUPCWI/AAAAAAAAANM/GqbcLJq_DQE/s1600/0101161633.jpg)
 
 ![nrfd_p3](http://1.bp.blogspot.com/-APzVJiaRSlg/VrG5CoMjAJI/AAAAAAAAANQ/rdJeIdwVzW8/s1600/0119160345.jpg)
 
