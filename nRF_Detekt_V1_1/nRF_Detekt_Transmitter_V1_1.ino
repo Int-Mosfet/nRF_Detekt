@@ -2,9 +2,6 @@
 /*
 * Modified version of "Getting Started" example by TMRh20 from RF24 library
 * by Int-Mosfet, July 2016
-* 
-* https://github.com/TMRh20/RF24/blob/master/examples/GettingStarted/GettingStarted.ino
-* 
 * MIT License on: https://github.com/Int-Mosfet/nRF_Detekt/blob/master/LICENSE
 * 
 * This code detects a state change from a sensor (in my case a radar with a relay)
@@ -12,23 +9,23 @@
 * 1 microsecond counter, 1 millisecond counter, 4 pseudo-random samples, and 2 pre-defined 
 * authentication variables; and sends out via an nRF24 radio module.
 * Optionally, the channel sent on is then incremented on each activation.
-* The encryption is Keeloq -> XTEA -> AES-128-ECB
+* The encryption is AES-128-ECB -> XTEA -> AES-128-ECB
 */
 
 /**************
 * nRF_Detekt (Transmitter), V1.1
 **************/
 
-#include <SPI.h>		//for nRF module
-#include <Entropy.h>		//for generating entropy
-#include <EEPROM.h>		//for storing channels, activations, other variables
-#include <AESLib.h>		//for AES encryption
-#include <Xtea.h>		//for XTEA encryption
-				//Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
-#include <Keeloq.h>       	//for Keeloq encryption
-                          	//Make sure to change WProgram.h to Arduino.h in Keeloq.cpp and Keeloq.h !!!!
-#include "RF24.h"		//for nRF24 radio (primary firmware in .cpp file)
-#include "nRF24L01.h"		//for nRF24 radio (definitions)
+#include <SPI.h>			//for nRF module
+#include <Entropy.h>			//for generating entropy
+#include <EEPROM.h>			//for storing channels, activations, other variables
+#include <AESLib.h>			//for AES encryption
+#include <Xtea.h>			//for XTEA encryption
+					//Make sure to change WProgram.h to Arduino.h in xtea.cpp and xtea.h !!!!
+//#include <Keeloq.h>                   //for Keeloq encryption
+                                        //Make sure to change WProgram.h to Arduino.h in Keeloq.cpp and Keeloq.h !!!!
+#include "RF24.h"			//for nRF24 radio (primary firmware in .cpp file)
+#include "nRF24L01.h"			//for nRF24 radio (definitions)
 
 /**************
 * CRYPTO VARIABLES
@@ -60,6 +57,7 @@ byte buff[32];
 #define AES_BLOCK_SIZE 16
 byte data2[AES_BLOCK_SIZE];
 
+//NOT USING KEELOQ FOR NOW
 //Keeloq blocksize is 4 bytes
 //It's a symmetric block cipher just
 //like how I'm using AES-ECB and XTEA
@@ -72,8 +70,9 @@ byte data2[AES_BLOCK_SIZE];
 //It uses a 64 bit key
 //It uses a non-linear feedback shift register
 //Frankly, it's a strange algorithm
-#define KEELOQ_BLOCK_SIZE 4
-byte data3[KEELOQ_BLOCK_SIZE];
+//#define KEELOQ_BLOCK_SIZE 4
+//byte data3[KEELOQ_BLOCK_SIZE];
+//unsigned long data3[KEELOQ_BLOCK_SIZE];
 
 
 /**************
@@ -122,7 +121,7 @@ struct packetStruct{
 } dataPacket;
 
 //maybe try another struct if you want to send more
-/*struct packetStruct{
+/*struct packetStruct2{
   unsigned long i;      //
   unsigned long j;      //
   unsigned long k;      //
@@ -142,14 +141,15 @@ unsigned long key[4] = { 0xDEADBEEF, 0xCAFEBEEF, 0xBABEBEEF, 0xF00DBEEF }; //mmm
 Xtea x(key);
 
 //AES
-uint8_t AES_key[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };  //CHANGE. THIS. KEY. (16 bytes)
+uint8_t AES_key1[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };  //CHANGE. THIS. KEY. (16 bytes)
+uint8_t AES_key2[] = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 };  //CHANGE. THIS. KEY. (16 bytes)
 
 //unused for now
-uint8_t AES_eeprom_key[] = { 16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 };
+//uint8_t AES_eeprom_key[] = { 16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 };
 
 //Keeloq
 //a high and low unsigned long as the key (64bits)
-Keeloq k(0x12345678, 0x12345678);  //Do I have to say it? Change the key.
+//Keeloq k(0x12345678, 0x12345678);  //Do I have to say it? Change the key.
 
 /**************
 * SETUP()
@@ -225,6 +225,7 @@ void loop() {
   uint8_t sensorVal = digitalRead(7); //digital pin 7, relay from radar module connected here
                                       //if your sensor sends out a digital signal then you can
                                       //use that too, that makes it even easier in fact
+  //unsigned long temp_var = 0;
  
   //Test variables to verify crypto works
   /*
@@ -260,8 +261,8 @@ void loop() {
     unsigned long AUTHENTICATE2 = 0xBEEFDEAD;
   
     //intermediate variables for encryption
-    char *headAddress = (char *)&dataPacket;
-    char *buffAddress = (char *)&buff;
+    char *headAddress =  (char *)&dataPacket;
+    char *buffAddress =  (char *)&buff;
 	
     //after every activation there will be a timeout period
     uint8_t timeout_count = 0;
@@ -307,50 +308,54 @@ void loop() {
     Serial.println();
     
     //What I'm doing is using a form of chaining ciphers, so if someone can break
-    //XTEA, can they break Keeloq and AES too?  What about combining them together?
+    //XTEA, can they break AES too?  What about combining them together?
     //I'm very certain that hacks to nRF_Detekt will be because a weakness/flaw
     //in the enhanced shockburst protocol used by the radio modules, or an attack
     //on your sensor used, or killing power (I haven't set up a way to deal with
     //that yet, like a weird glitch) over breaking the encryption
     //memcpy( void* dest, const void* src, sizeof bytes to copy)
     
+    
+    //not doing keeloq now
+    //leaving for future reference, builds but doesn't do anything
+    //since crypto isn't a weak spot and other features would be
+    //more desirable I'm sticking with AES and XTEA for now
+    /*
     //Keeloq encryption
     for( uint32_t i = 0; i < 8; i++)  //8*4 = 32 bytes
     {
-      memcpy(data3, headAddress+(i*KEELOQ_BLOCK_SIZE), KEELOQ_BLOCK_SIZE);
+      //memcpy(data3, headAddress+(i*KEELOQ_BLOCK_SIZE), KEELOQ_BLOCK_SIZE);
+      memmove(data3, headAddress+(i*KEELOQ_BLOCK_SIZE), KEELOQ_BLOCK_SIZE);
       for(uint8_t j = 0; j < 10; j++)
       {
-        k.encrypt((uint32_t)data3);  //I'm doing 10 rounds of Keeloq (it's slow!)
+        k.encrypt((unsigned long)data3);  //I'm doing 10 rounds of Keeloq (it's slow!)
       }
-      memcpy(buffAddress+(i*KEELOQ_BLOCK_SIZE), data3, KEELOQ_BLOCK_SIZE);
+      //memcpy(buffAddress+(i*KEELOQ_BLOCK_SIZE), temp_var, KEELOQ_BLOCK_SIZE);
+      memmove(buffAddress+(i*KEELOQ_BLOCK_SIZE), data3, KEELOQ_BLOCK_SIZE);
     }
-    //memcpy(&dataPacket, &buff, sizeof(dataPacket)); //<--Don't reassemble yet
+    //memcpy(&dataPacket, &buff, 32); //<--Don't reassemble yet
+    memmove(&dataPacket, &buff, sizeof(dataPacket)); //<--Don't reassemble yet
+    */
     
-    //XTEA Encryption
-    for( uint32_t i = 0; i < 4; i++)  //4*8 = 32 bytes
-    {
-      memcpy(data, headAddress+(i*XT_BLOCK_SIZE), XT_BLOCK_SIZE);
-      for(uint8_t j = 0; j < 64; j++)
-      {
-        x.encrypt((uint32_t*)data);  //Recommended 64 rounds
-      }
-      memcpy(buffAddress+(i*XT_BLOCK_SIZE), data, XT_BLOCK_SIZE);
-    }
-    //memcpy(&dataPacket, &buff, sizeof(dataPacket)); //<--Don't reassemble yet
     
-    //AES Encryption
+    //AES Encryption 1
     for(uint32_t i = 0; i < 2; i++)  //2*16 = 32bytes
     {
-      memcpy(data2, headAddress+(i*AES_BLOCK_SIZE), AES_BLOCK_SIZE);
+      //memcpy(data2, headAddress+(i*AES_BLOCK_SIZE), AES_BLOCK_SIZE);
+      memmove(data2, headAddress+(i*AES_BLOCK_SIZE), AES_BLOCK_SIZE);
       for(uint8_t j = 0; j < 10; j++)
       {
-        aes128_enc_single(AES_key, (uint32_t*)data2); //Recommended 10 rounds
+        aes128_enc_single(AES_key1, (uint32_t*)data2); //Recommended 10 rounds
       }
-      memcpy(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
+      //memcpy(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
+      memmove(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
     }
-    memcpy(&dataPacket, &buff, sizeof(dataPacket));  //Now reassemble for transmission
+    //memcpy(&dataPacket, &buff, sizeof(dataPacket));  //must reassemble each time!!
+    memmove(&dataPacket, &buff, sizeof(dataPacket));  //must reassemble each time!!
     
-    Serial.print("After Encrypt: ");
+    
+    
+    Serial.print("After Encrypt1: ");
     Serial.print(dataPacket.a, HEX);
     Serial.println();
     Serial.print(dataPacket.b, HEX);
@@ -367,6 +372,84 @@ void loop() {
     Serial.println();
     Serial.print(dataPacket.h, HEX);
     Serial.println();
+    
+    
+    //XTEA Encryption
+    for( uint32_t i = 0; i < 4; i++)  //4*8 = 32 bytes
+    {
+      //memcpy(data, headAddress+(i*XT_BLOCK_SIZE), XT_BLOCK_SIZE);
+      memmove(data, headAddress+(i*XT_BLOCK_SIZE), XT_BLOCK_SIZE);
+      //Serial.println("printing data");
+      //Serial.print((byte)*data, HEX);
+      //Serial.println();
+      for(uint8_t j = 0; j < 64; j++)
+      {
+        x.encrypt((uint32_t*)data);  //Recommended 64 rounds
+      }
+      //memcpy(buffAddress+(i*XT_BLOCK_SIZE), data, XT_BLOCK_SIZE);
+      memmove(buffAddress+(i*XT_BLOCK_SIZE), data, XT_BLOCK_SIZE);
+      //Serial.println("printing buff");
+      //Serial.print((byte)*buff, HEX);
+      //Serial.println();
+    }
+    
+    //memcpy(&dataPacket2, &buff, sizeof(dataPacket2)); //<--must reassemble each time!!
+    memmove(&dataPacket, &buff, sizeof(dataPacket)); //<--must reassemble each time!!
+    
+    Serial.print("After Encrypt2: ");
+    Serial.print(dataPacket.a, HEX);
+    Serial.println();
+    Serial.print(dataPacket.b, HEX);
+    Serial.println();
+    Serial.print(dataPacket.c, HEX);
+    Serial.println();
+    Serial.print(dataPacket.d, HEX);
+    Serial.println();
+    Serial.print(dataPacket.e, HEX);
+    Serial.println();
+    Serial.print(dataPacket.f, HEX);
+    Serial.println();
+    Serial.print(dataPacket.g, HEX);
+    Serial.println();
+    Serial.print(dataPacket.h, HEX);
+    Serial.println();
+    
+    
+    
+    //AES Encryption 2
+    for(uint32_t i = 0; i < 2; i++)  //2*16 = 32bytes
+    {
+      //memcpy(data2, headAddress+(i*AES_BLOCK_SIZE), AES_BLOCK_SIZE);
+      memmove(data2, headAddress+(i*AES_BLOCK_SIZE), AES_BLOCK_SIZE);
+      for(uint8_t j = 0; j < 10; j++)
+      {
+        aes128_enc_single(AES_key2, (uint32_t*)data2); //Recommended 10 rounds
+      }
+      //memcpy(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
+      memmove(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
+    }
+    //memcpy(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have plaintext now
+    memmove(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have plaintext now
+    
+    
+    Serial.print("After Encrypt3: ");
+    Serial.print(dataPacket.a, HEX);
+    Serial.println();
+    Serial.print(dataPacket.b, HEX);
+    Serial.println();
+    Serial.print(dataPacket.c, HEX);
+    Serial.println();
+    Serial.print(dataPacket.d, HEX);
+    Serial.println();
+    Serial.print(dataPacket.e, HEX);
+    Serial.println();
+    Serial.print(dataPacket.f, HEX);
+    Serial.println();
+    Serial.print(dataPacket.g, HEX);
+    Serial.println();
+    Serial.print(dataPacket.h, HEX);
+    Serial.println();
+    
     
     timeout_count++;
     act_count++;
