@@ -428,8 +428,8 @@ void loop() {
       //memcpy(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
       memmove(buffAddress+(i*AES_BLOCK_SIZE), data2, AES_BLOCK_SIZE);
     }
-    //memcpy(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have plaintext now
-    memmove(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have plaintext now
+    //memcpy(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have ciphertext now
+    memmove(&dataPacket, &buff, sizeof(dataPacket));  //Final assembly, should have ciphertext now
     
     
     Serial.print("After Encrypt3: ");
