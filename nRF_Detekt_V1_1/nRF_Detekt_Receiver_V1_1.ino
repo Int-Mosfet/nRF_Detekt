@@ -257,11 +257,9 @@ void loop() {
 
   if( radio.available() )
   {
-        while( radio.available() )     //read in packet
-        {
-            radio.read(&dataPacket, sizeof(dataPacket)); //read in the packet to fill in the struct
-        }
-
+        
+        radio.read(&dataPacket, sizeof(dataPacket));  //read in the packet to fill in the struct
+        
         //lcd.backlight(); //turn on backlight
         lcd.clear();
         lcd.setCursor(0,0); //setting to char 0, line 1
